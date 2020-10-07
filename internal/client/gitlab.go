@@ -197,7 +197,11 @@ func (c *gitlabClient) CreateRelease(ctx *context.Context, body string) (release
 		return "", err
 	}
 
-	projectID := ctx.Config.Release.GitLab.Owner + "/" + ctx.Config.Release.GitLab.Name
+	//projectID := ctx.Config.Release.GitLab.Owner + "/" + ctx.Config.Release.GitLab.Name
+	projectID := ctx.Config.Release.GitLab.Name
+	if len(strings.TrimSpace(ctx.Config.Release.GitLab.Owner)) > 0 {
+		projectID = ctx.Config.Release.GitLab.Owner + "/" + ctx.Config.Release.GitLab.Name
+	}
 	log.WithFields(log.Fields{
 		"owner": ctx.Config.Release.GitLab.Owner,
 		"name":  ctx.Config.Release.GitLab.Name,
@@ -216,7 +220,8 @@ func (c *gitlabClient) CreateRelease(ctx *context.Context, body string) (release
 		}).Debug("get release")
 
 		description := body
-		ref := ctx.Git.Commit
+		//ref := ctx.Git.Commit
+		ref := "master"
 		gitURL := ctx.Git.URL
 
 		log.WithFields(log.Fields{
@@ -278,7 +283,11 @@ func (c *gitlabClient) Upload(
 	artifact *artifact.Artifact,
 	file *os.File,
 ) error {
-	projectID := ctx.Config.Release.GitLab.Owner + "/" + ctx.Config.Release.GitLab.Name
+	//projectID := ctx.Config.Release.GitLab.Owner + "/" + ctx.Config.Release.GitLab.Name
+	projectID := ctx.Config.Release.GitLab.Name
+	if len(strings.TrimSpace(ctx.Config.Release.GitLab.Owner)) > 0 {
+		projectID = ctx.Config.Release.GitLab.Owner + "/" + ctx.Config.Release.GitLab.Name
+	}
 
 	log.WithField("file", file.Name()).Debug("uploading file")
 	projectFile, _, err := c.client.Projects.UploadFile(
